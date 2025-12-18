@@ -18,17 +18,15 @@ let package = Package(
     products: [
         .library(
             name: "AriseMobileSdk",
-            targets: ["AriseMobileSdk"]
+            targets: ["AriseMobileSdkWrapper"]
         ),
         .library(
             name: "CloudCommerce",
-            targets: ["CloudCommerce"]
+            targets: ["CloudCommerceWrapper"]
         ),
     ],
     dependencies: [
         // OpenAPI dependencies used by AriseMobileSdk
-        // Note: These are statically linked in the binary framework,
-        // but declared here for reference and compatibility
         // Using closed version ranges (patch updates only) to prevent breaking changes
         .package(url: "https://github.com/apple/swift-openapi-runtime", "1.8.3"..<"1.9.0"),
         .package(url: "https://github.com/apple/swift-openapi-urlsession", "1.2.0"..<"1.3.0"),
@@ -41,18 +39,37 @@ let package = Package(
     ],
     targets: [
         // CloudCommerce binary target
+        // Note: Module name in XCFramework is "CloudCommerce"
         .binaryTarget(
             name: "CloudCommerce",
             path: "libs/CloudCommerce.xcframework"
         ),
         // AriseMobileSdk binary target
-        // Note: All dependencies (OpenAPIRuntime, OpenAPIURLSession, CloudCommerce)
-        // are statically linked in AriseMobileSdk.xcframework
-        // Binary targets don't support dependencies parameter, but dependencies
-        // are declared above for reference and to ensure compatibility
+        // Note: Module name in XCFramework is "AriseMobileSdk"
         .binaryTarget(
             name: "AriseMobileSdk",
             path: "libs/AriseMobileSdk.xcframework"
+        ),
+        
+        // Wrapper targets that link dependencies with binary frameworks
+        .target(
+            name: "CloudCommerceWrapper",
+            dependencies: [
+                "CloudCommerce",
+                .product(name: "CryptoSwift", package: "CryptoSwift"),
+                .product(name: "SwiftASN1", package: "swift-asn1"),
+                .product(name: "X509", package: "swift-certificates"),
+            ]
+        ),
+        
+        .target(
+            name: "AriseMobileSdkWrapper",
+            dependencies: [
+                "AriseMobileSdk",
+                "CloudCommerceWrapper",
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+            ]
         ),
     ]
 )
