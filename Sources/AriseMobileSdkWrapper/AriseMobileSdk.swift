@@ -1,13 +1,13 @@
-// AriseMobileSdk
+// AriseMobileSdkWrapper
 // This wrapper ensures dependencies are linked with the binary frameworks
-// The binary frameworks (AriseMobileSdkBinary and CloudCommerce) are linked through dependencies
+// The binary frameworks are linked through dependencies in Package.swift
 
 import Foundation
 
-// Import binary frameworks (module names come from XCFramework, not target names)
-// AriseMobileSdkBinary target provides "AriseMobileSdk" module
-// CloudCommerce target provides "CloudCommerce" module
+// Import the binary framework module (module name is "AriseMobileSdk")
 @_exported import AriseMobileSdk
+
+// Import CloudCommerce binary framework
 @_exported import CloudCommerce
 
 // Re-export dependencies that are required by the binary frameworks

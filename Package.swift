@@ -18,7 +18,7 @@ let package = Package(
     products: [
         .library(
             name: "AriseMobileSdk",
-            targets: ["AriseMobileSdk"]
+            targets: ["AriseMobileSdkWrapper"]
         ),
     ],
     dependencies: [
@@ -46,8 +46,9 @@ let package = Package(
             path: "libs/AriseMobileSdk.xcframework"
         ),
         // Wrapper target that links all dependencies with binary frameworks
+        // This target re-exports the binary framework and ensures dependencies are available
         .target(
-            name: "AriseMobileSdk",
+            name: "AriseMobileSdkWrapper",
             dependencies: [
                 "AriseMobileSdkBinary",  // Provides "AriseMobileSdk" module
                 "CloudCommerce",          // Provides "CloudCommerce" module
@@ -56,7 +57,8 @@ let package = Package(
                 .product(name: "CryptoSwift", package: "CryptoSwift"),
                 .product(name: "SwiftASN1", package: "swift-asn1"),
                 .product(name: "X509", package: "swift-certificates"),
-            ]
+            ],
+            path: "Sources/AriseMobileSdkWrapper"
         ),
     ]
 )
