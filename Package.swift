@@ -18,11 +18,7 @@ let package = Package(
     products: [
         .library(
             name: "AriseMobileSdk",
-            targets: ["AriseMobileSdkWrapper"]
-        ),
-        .library(
-            name: "CloudCommerce",
-            targets: ["CloudCommerceWrapper"]
+            targets: ["AriseMobileSdk"]
         ),
     ],
     dependencies: [
@@ -39,36 +35,27 @@ let package = Package(
     ],
     targets: [
         // CloudCommerce binary target
-        // Note: Module name in XCFramework is "CloudCommerce"
         .binaryTarget(
             name: "CloudCommerce",
             path: "libs/CloudCommerce.xcframework"
         ),
         // AriseMobileSdk binary target
-        // Note: Module name in XCFramework is "AriseMobileSdk"
+        // Note: Module name exported is "AriseMobileSdk"
         .binaryTarget(
-            name: "AriseMobileSdk",
+            name: "AriseMobileSdkBinary",
             path: "libs/AriseMobileSdk.xcframework"
         ),
-        
-        // Wrapper targets that link dependencies with binary frameworks
+        // Wrapper target that links all dependencies with binary frameworks
         .target(
-            name: "CloudCommerceWrapper",
+            name: "AriseMobileSdk",
             dependencies: [
-                "CloudCommerce",
+                "AriseMobileSdkBinary",  // Provides "AriseMobileSdk" module
+                "CloudCommerce",          // Provides "CloudCommerce" module
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
                 .product(name: "CryptoSwift", package: "CryptoSwift"),
                 .product(name: "SwiftASN1", package: "swift-asn1"),
                 .product(name: "X509", package: "swift-certificates"),
-            ]
-        ),
-        
-        .target(
-            name: "AriseMobileSdkWrapper",
-            dependencies: [
-                "AriseMobileSdk",
-                "CloudCommerceWrapper",
-                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
             ]
         ),
     ]
